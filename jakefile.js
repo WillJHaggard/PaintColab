@@ -1,9 +1,21 @@
+/*global desc, task, jake, fail, complete*/
 
-desc("Example!");
-task("example", ["dependency"], function() {
-    console.log("example task");
-});
+"use strict";
 
-task("dependency", function() {
-    console.log("dependency");
+task("default", ["lint"]);
+
+desc("Lint Everything");
+task("lint", [], function() {
+    var lint = require("./build/lint/lint_runner.js");
+
+    var files = new jake.FileList();
+    files.include("**/*.js");
+    files.exclude("node_modules");
+    files.exclude("build");
+
+    var options = {
+        node: true
+    };
+
+    lint.validateFileList(files.toArray(), options, {});
 });
