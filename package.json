@@ -1,0 +1,20 @@
+{
+  "name": "PaintColab",
+  "version": "1.0.0",
+  "description": "Collaborative Painting App with Node.js and Plain Javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WillJHaggard/PaintColab.git"
+  },
+  "keywords": [],
+  "author": "Will J. Haggard <willjhaggard@gmail.com> (http://willjhaggard.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/WillJHaggard/PaintColab/issues"
+  },
+  "homepage": "https://github.com/WillJHaggard/PaintColab#readme"
+}
