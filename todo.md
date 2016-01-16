@@ -17,10 +17,11 @@ User Stories:
 
 Engineering Tasks:
 --------------------
-- Create a very simple http-server --using http-server module
+* Create a very simple http-server
 
 Future Ideas
 -------------
+- Create 'fail fast' assertion code
 - Abstract test framework?
 
 

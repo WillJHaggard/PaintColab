@@ -3,6 +3,12 @@
 var server = require("./server.js");
 var http = require("http");
 
+exports.setUp = function(done) {
+    server.start(8080);
+    done();
+};
+
+
 exports.tearDown = function(done) {
     server.stop(function() {
         done();
@@ -31,5 +37,26 @@ exports.test_serverReturnsHelloWorld = function(test) {
     });
 };
 
+exports.test_serverRequiresPortNumber = function(test) {
+    test.throws(function() {
+        server.start();
+    });
+    test.done();
+};
 
 
+exports.test_serverRunsCallbackWhenStopCompletes = function(test) {
+    server.start(); // TODO: this is kludgy
+    server.stop(function() {
+        test.done();
+    });
+
+};
+
+exports.test_stopErrorsWhenNotRunning = function(test) {
+    server.stop(function(err) {
+        test.notEqual(err, undefined);
+        test.done();
+    });
+
+};
