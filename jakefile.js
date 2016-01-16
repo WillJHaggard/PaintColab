@@ -4,8 +4,11 @@ var chalk = require("chalk");
 (function() {
 "use strict";
 
-desc("Build and Test");
+desc("Build, Test");
 task("default", ["lint"]);
+
+
+
 
 desc("Lint Everything");
 task("lint", [], function() {
@@ -23,8 +26,8 @@ task("lint", [], function() {
 });
 
 // nodeunit task
-desc("Test everything");
-task("test", [], function() {
+desc("Test Everything");
+task("test", ["node"], function() {
     var reporter = require("nodeunit").reporters.minimal;
     reporter.run(['src/server/_server_test.js'], null, function(failures) {
         if (failures) fail(chalk.red("Tests Failed :'("));
@@ -51,6 +54,33 @@ task("test", [], function() {
 //     console.log("Integration logic goes here");
 // });
 // FOR WINDOWS INTEGRATION; NOT WORRIED AS OF RIGHT NOW.
+
+// desc("Ensure correct version of Node is present");
+task("node", [], function() {
+    var desiredNodeVersion = "v5.0.0\n"; // ISSUE with this..
+    // 'node --version'
+    var command = "node --version";
+    console.log("> " + command);
+    var stdout = "";
+    var process = jake.createExec(command, { printStdout: true, printStderr: true });
+    process.on("stdout", function(chunk) {
+        stdout += chunk;
+    });
+    process.on("cmdEnd", function() {
+        if (stdout !== desiredNodeVersion) fail("Incorrect node version. Expected " + desiredNodeVersion);
+
+        console.log("command done");
+        complete();
+    });
+    process.run();
+
+    // jake.exec(command, function() {
+    //     complete();
+    // }, { printStdout: true, printStderr: true });
+}, { async: true });
+
+
+
 
 function nodeLintOptions() {
         return {

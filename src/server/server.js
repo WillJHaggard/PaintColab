@@ -6,7 +6,7 @@ var server;
 //     "This is a server"
 // ));
 
-exports.start = function(portNumber) {
+exports.start = function(portNumber, message) {
     if (!portNumber) throw new Error(message);
 
     server = http.createServer();
