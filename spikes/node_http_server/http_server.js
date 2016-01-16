@@ -1,4 +1,4 @@
-// Copyright (c) 2012 Titanium I.T. LLC. All rights reserved. See LICENSE.txt for details.
+
 
 // This is a simple spike of Node's HTTP module. The goal was to show
 // how to serve a very simple HTML page using Node.

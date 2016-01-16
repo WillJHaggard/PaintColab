@@ -1,17 +1,19 @@
 "use strict";
-var chalk = require("chalk");
-var http = require("http");
-var server;
-// console.log(chalk.bgCyan(
-//     "This is a server"
-// ));
 
-exports.start = function(portNumber, message) {
-    if (!portNumber) throw new Error(message);
+var http = require("http");
+var fs = require("fs");
+var chalk = require("chalk");
+var server;
+
+exports.start = function(htmlFileToServe, portNumber) {
+    if(!portNumber) throw "port number is required";
 
     server = http.createServer();
     server.on("request", function(request, response) {
-        response.end("Hello World");
+        fs.readFile(htmlFileToServe, function (err, data) {
+            if (err) throw err;     //TODO: fix me
+            response.end(data);
+        });
     });
     server.listen(portNumber);
 };
@@ -19,7 +21,3 @@ exports.start = function(portNumber, message) {
 exports.stop = function(callback) {
     server.close(callback);
 };
-
-
-
-

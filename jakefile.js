@@ -1,8 +1,17 @@
-/*global desc, task, jake, fail, complete */
+/*global desc, task, jake, fail, complete, directory*/
 (function() {
     "use strict";
 
-    var NODE_VERSION = "v5.0.0";
+    var NODE_VERSION = "v0.8.6";
+    var GENERATED_DIR = "generated";
+    var TEMP_TESTFILE_DIR = GENERATED_DIR + "/test";
+
+    directory(TEMP_TESTFILE_DIR);
+
+    desc("Delete all generated files");
+    task("clean", [], function() {
+        jake.rmRf(GENERATED_DIR);
+    });
 
     desc("Build and test");
     task("default", ["lint", "test"]);
@@ -20,7 +29,7 @@
     });
 
     desc("Test everything");
-    task("test", ["nodeVersion"], function() {
+    task("test", ["nodeVersion", TEMP_TESTFILE_DIR], function() {
         var reporter = require("nodeunit").reporters["default"];
         reporter.run(['src/server/_server_test.js'], null, function(failures) {
             if (failures) fail("Tests failed");
@@ -28,18 +37,18 @@
         });
     }, {async: true});
 
-    desc("Integrate");
-    task("integrate", ["default"], function() {
-        console.log("1. Make sure 'git status' is clean.");
-        console.log("2. Build on the integration box.");
-        console.log("   a. Walk over to integration box.");
-        console.log("   b. 'git pull'");
-        console.log("   c. 'jake strict=true'");
-        console.log("   d. If jake fails, stop! Try again after fixing the issue.");
-        console.log("3. 'git checkout integration'");
-        console.log("4. 'git merge master --no-ff --log'");
-        console.log("5. 'git checkout master'");
-    });
+    // desc("Integrate");
+    // task("integrate", ["default"], function() {
+    //     console.log("1. Make sure 'git status' is clean.");
+    //     console.log("2. Build on the integration box.");
+    //     console.log("   a. Walk over to integration box.");
+    //     console.log("   b. 'git pull'");
+    //     console.log("   c. 'jake strict=true'");
+    //     console.log("   d. If jake fails, stop! Try again after fixing the issue.");
+    //     console.log("3. 'git checkout integration'");
+    //     console.log("4. 'git merge master --no-ff --log'");
+    //     console.log("5. 'git checkout master'");
+    // });
 
 //  desc("Ensure correct version of Node is present. Use 'strict=true' to require exact match");
     task("nodeVersion", [], function() {
@@ -66,8 +75,6 @@
 
     });
 
-
-    // functions for tasks; helpers that have been factored out
     function parseNodeVersion(description, versionString) {
         var versionMatcher = /^v(\d+)\.(\d+)\.(\d+)$/;    // v[major].[minor].[bugfix]
         var versionInfo = versionString.match(versionMatcher);
@@ -101,6 +108,7 @@
             eqeqeq:true,
             forin:true,
             immed:true,
+            esversion: 6,
             latedef:false,
             newcap:true,
             noarg:true,

@@ -17,7 +17,9 @@ User Stories:
 
 Engineering Tasks:
 --------------------
-* Serve a file
+* Spike serving a file
+- TDD file serving
+- design work?
 
 Future Ideas
 -------------
