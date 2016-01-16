@@ -1,4 +1,6 @@
 /*global desc, task, jake, fail, complete*/
+var chalk = require("chalk");
+
 (function() {
 "use strict";
 
@@ -24,27 +26,31 @@ task("lint", [], function() {
 desc("Test everything");
 task("test", [], function() {
     var reporter = require("nodeunit").reporters.minimal;
-    reporter.run(['src/server/_server_test.js']);
-});
+    reporter.run(['src/server/_server_test.js'], null, function(failures) {
+        if (failures) fail(chalk.red("Tests Failed :("));
+        complete();
+    });
+}, { async: true });
 
 
 
 
 
-desc("Integrate");
-task("Integrate", ["default"], function() {
-    console.log("1. Make sure 'git status' is clean");
-    console.log("2. Build on the integration box");
-    console.log("  a. Walk over to integration box");
-    console.log("  b. 'git pull'");
-    console.log("  c. 'jake'");
-    console.log("3. 'git checkout integration");
-    console.log("4. 'git merge master ==no-ff --log");
-    console.log("5. 'git checkout master'");
+// desc("Integrate");
+// task("integrate", ["default"], function() {
+//     console.log("1. Make sure 'git status' is clean");
+//     console.log("2. Build on the integration box");
+//     console.log("  a. Walk over to integration box");
+//     console.log("  b. 'git pull'");
+//     console.log("  c. 'jake'");
+//     console.log("3. 'git checkout integration");
+//     console.log("4. 'git merge master ==no-ff --log");
+//     console.log("5. 'git checkout master'");
 
 
-    console.log("Integration logic goes here");
-});
+//     console.log("Integration logic goes here");
+// });
+// FOR WINDOWS INTEGRATION; NOT WORRIED AS OF RIGHT NOW.
 
 function nodeLintOptions() {
         return {

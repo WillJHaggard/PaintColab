@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/WillJHaggard/PaintColab/issues"
   },
-  "homepage": "https://github.com/WillJHaggard/PaintColab#readme"
+  "homepage": "https://github.com/WillJHaggard/PaintColab#readme",
+  "dependencies": {
+    "chalk": "1.1.1"
+  }
 }

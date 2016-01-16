@@ -23,5 +23,9 @@ Engineering Tasks:
 * server-side testing
 * client-side testing
 
+Future Ideas
+-------------
+- Abstract test framework?
+
 
 
