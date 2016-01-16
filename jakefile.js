@@ -1,104 +1,116 @@
-/*global desc, task, jake, fail, complete*/
-var chalk = require("chalk");
-
+/*global desc, task, jake, fail, complete */
 (function() {
-"use strict";
+    "use strict";
 
-desc("Build, Test");
-task("default", ["lint"]);
+    var NODE_VERSION = "v5.0.0";
 
+    desc("Build and test");
+    task("default", ["lint", "test"]);
 
+    desc("Lint everything");
+    task("lint", ["nodeVersion"], function() {
+        var lint = require("./build/lint/lint_runner.js");
 
-
-desc("Lint Everything");
-task("lint", [], function() {
-    var lint = require("./build/lint/lint_runner.js");
-
-    var files = new jake.FileList();
-    files.include("**/*.js");
-    files.exclude("node_modules");
-    var options = nodeLintOptions();
-    var passed = lint.validateFileList(files.toArray(), options, {});
-    if (!passed) fail("Lint Failed");
-
-
-
-});
-
-// nodeunit task
-desc("Test Everything");
-task("test", ["node"], function() {
-    var reporter = require("nodeunit").reporters.minimal;
-    reporter.run(['src/server/_server_test.js'], null, function(failures) {
-        if (failures) fail(chalk.red("Tests Failed :'("));
-        complete();
+        var files = new jake.FileList();
+        files.include("**/*.js");
+        files.exclude("node_modules");
+        var options = nodeLintOptions();
+        var passed = lint.validateFileList(files.toArray(), options, {});
+        if (!passed) fail("Lint failed");
     });
-}, { async: true });
 
+    desc("Test everything");
+    task("test", ["nodeVersion"], function() {
+        var reporter = require("nodeunit").reporters["default"];
+        reporter.run(['src/server/_server_test.js'], null, function(failures) {
+            if (failures) fail("Tests failed");
+            complete();
+        });
+    }, {async: true});
 
-
-
-
-// desc("Integrate");
-// task("integrate", ["default"], function() {
-//     console.log("1. Make sure 'git status' is clean");
-//     console.log("2. Build on the integration box");
-//     console.log("  a. Walk over to integration box");
-//     console.log("  b. 'git pull'");
-//     console.log("  c. 'jake'");
-//     console.log("3. 'git checkout integration");
-//     console.log("4. 'git merge master --no-ff --log");
-//     console.log("5. 'git checkout master'");
-
-
-//     console.log("Integration logic goes here");
-// });
-// FOR WINDOWS INTEGRATION; NOT WORRIED AS OF RIGHT NOW.
-
-// desc("Ensure correct version of Node is present");
-task("node", [], function() {
-    var desiredNodeVersion = "v5.0.0\n"; // ISSUE with this..
-    // 'node --version'
-    var command = "node --version";
-    console.log("> " + command);
-    var stdout = "";
-    var process = jake.createExec(command, { printStdout: true, printStderr: true });
-    process.on("stdout", function(chunk) {
-        stdout += chunk;
+    desc("Integrate");
+    task("integrate", ["default"], function() {
+        console.log("1. Make sure 'git status' is clean.");
+        console.log("2. Build on the integration box.");
+        console.log("   a. Walk over to integration box.");
+        console.log("   b. 'git pull'");
+        console.log("   c. 'jake strict=true'");
+        console.log("   d. If jake fails, stop! Try again after fixing the issue.");
+        console.log("3. 'git checkout integration'");
+        console.log("4. 'git merge master --no-ff --log'");
+        console.log("5. 'git checkout master'");
     });
-    process.on("cmdEnd", function() {
-        if (stdout !== desiredNodeVersion) fail("Incorrect node version. Expected " + desiredNodeVersion);
 
-        console.log("command done");
-        complete();
+//  desc("Ensure correct version of Node is present. Use 'strict=true' to require exact match");
+    task("nodeVersion", [], function() {
+        function failWithQualifier(qualifier) {
+            fail("Incorrect node version. Expected " + qualifier +
+                    " [" + expectedString + "], but was [" + actualString + "].");
+        }
+
+        var expectedString = NODE_VERSION;
+        var actualString = process.version;
+        var expected = parseNodeVersion("expected Node version", expectedString);
+        var actual = parseNodeVersion("Node version", actualString);
+
+        if (process.env.strict) {
+            if (actual[0] !== expected[0] || actual[1] !== expected[1] || actual[2] !== expected[2]) {
+                failWithQualifier("exactly");
+            }
+        }
+        else {
+            if (actual[0] < expected[0]) failWithQualifier("at least");
+            if (actual[0] === expected[0] && actual[1] < expected[1]) failWithQualifier("at least");
+            if (actual[0] === expected[0] && actual[1] === expected[1] && actual[2] < expected[2]) failWithQualifier("at least");
+        }
+
     });
-    process.run();
-
-    // jake.exec(command, function() {
-    //     complete();
-    // }, { printStdout: true, printStderr: true });
-}, { async: true });
 
 
+    // functions for tasks; helpers that have been factored out
+    function parseNodeVersion(description, versionString) {
+        var versionMatcher = /^v(\d+)\.(\d+)\.(\d+)$/;    // v[major].[minor].[bugfix]
+        var versionInfo = versionString.match(versionMatcher);
+        if (versionInfo === null) fail("Could not parse " + description + " (was '" + versionString + "')");
 
+        var major = parseInt(versionInfo[1], 10);
+        var minor = parseInt(versionInfo[2], 10);
+        var bugfix = parseInt(versionInfo[3], 10);
+        return [major, minor, bugfix];
+    }
 
-function nodeLintOptions() {
+    function sh(command, callback) {
+        console.log("> " + command);
+
+        var stdout = "";
+        var process = jake.createExec(command, {printStdout:true, printStderr: true});
+        process.on("stdout", function(chunk) {
+            stdout += chunk;
+        });
+        process.on("cmdEnd", function() {
+            console.log();
+            callback(stdout);
+        });
+        process.run();
+    }
+
+    function nodeLintOptions() {
         return {
-            bitwise: true,
-            curly: false,
-            eqeqeq: true,
-            forin: true,
-            immed: true,
-            latedef: false, // true causes options in validateFileList to not work
-            newcap: true,
-            noarg: true,
-            noempty: true,
-            nonew: true,
-            regexp: true,
-            undef: true,
-            strict: true,
-            trailing: true,
-            node: true
+            bitwise:true,
+            curly:false,
+            eqeqeq:true,
+            forin:true,
+            immed:true,
+            latedef:false,
+            newcap:true,
+            noarg:true,
+            noempty:true,
+            nonew:true,
+            regexp:true,
+            undef:true,
+            strict:true,
+            trailing:true,
+            node:true
         };
-}
-})();
+    }
+}());

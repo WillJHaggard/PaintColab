@@ -3,21 +3,6 @@
 var server = require("./server.js");
 var http = require("http");
 
-exports.setUp = function(done) {
-    server.start(8080);
-    done();
-};
-
-
-exports.tearDown = function(done) {
-    server.stop(function() {
-        done();
-    });
-};
-
-// TODO: handle case where stop() is called before start()
-// TODO: test-drive stop() callback
-
 exports.test_serverReturnsHelloWorld = function(test) {
     server.start(8080);
     var request = http.get("http://localhost:8080");
@@ -32,9 +17,16 @@ exports.test_serverReturnsHelloWorld = function(test) {
         });
         response.on("end", function() {
             test.ok(receivedData, "should have received response data");
-            test.done();
+            server.stop(function() {
+                test.done();
+            });
         });
     });
+};
+
+exports.test_serverServesAFile = function(test) {
+    test.done();
+    //TODO
 };
 
 exports.test_serverRequiresPortNumber = function(test) {
@@ -44,19 +36,16 @@ exports.test_serverRequiresPortNumber = function(test) {
     test.done();
 };
 
-
 exports.test_serverRunsCallbackWhenStopCompletes = function(test) {
-    server.start(); // TODO: this is kludgy
+    server.start(8080);
     server.stop(function() {
         test.done();
     });
-
 };
 
-exports.test_stopErrorsWhenNotRunning = function(test) {
-    server.stop(function(err) {
-        test.notEqual(err, undefined);
-        test.done();
+exports.test_stopCalledWhenServerIsntRunningThrowsException = function(test) {
+    test.throws(function() {
+        server.stop();
     });
-
+    test.done();
 };
