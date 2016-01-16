@@ -17,7 +17,7 @@ User Stories:
 
 Engineering Tasks:
 --------------------
-- Create a very simple http-server
+- Create a very simple http-server --using http-server module
 
 Future Ideas
 -------------

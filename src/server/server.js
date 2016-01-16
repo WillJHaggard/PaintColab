@@ -1,12 +1,23 @@
 "use strict";
 var chalk = require("chalk");
+var http = require("http");
+var server;
+// console.log(chalk.bgCyan(
+//     "This is a server"
+// ));
 
-console.log(chalk.bgCyan(
-    "This is a server"
-));
-
-exports.number = function() {
-    return 3;
+exports.start = function(portNumber) {
+    server = http.createServer();
+    server.on("request", function(request, response) {
+        response.end("Hello World");
+    });
+    server.listen(portNumber);
 };
+
+exports.stop = function(callback) {
+    server.close(callback);
+};
+
+
 
 
