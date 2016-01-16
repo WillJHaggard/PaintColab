@@ -20,7 +20,7 @@ task("lint", [], function() {
 
 });
 
-
+// nodeunit task
 desc("Test everything");
 task("test", [], function() {
     var reporter = require("nodeunit").reporters.minimal;
