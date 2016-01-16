@@ -19,5 +19,8 @@
   "homepage": "https://github.com/WillJHaggard/PaintColab#readme",
   "dependencies": {
     "chalk": "1.1.1"
+  },
+  "devDependencies": {
+    "http": "0.0.0"
   }
 }

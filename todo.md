@@ -17,15 +17,15 @@ User Stories:
 
 Engineering Tasks:
 --------------------
-* automated build
-* linting
-* continuous integration
-* server-side testing
-* client-side testing
+- Create a very simple http-server
 
 Future Ideas
 -------------
 - Abstract test framework?
 
+
+Notes:
+------------
+- NodeUnit doesn't seem to work on Windows (Though, I am sure this has been fixed)
 
 

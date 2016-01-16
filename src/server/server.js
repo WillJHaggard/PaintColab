@@ -1,6 +1,9 @@
 "use strict";
+var chalk = require("chalk");
 
-console.log("This is a server");
+console.log(chalk.bgCyan(
+    "This is a server"
+));
 
 exports.number = function() {
     return 3;

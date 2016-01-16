@@ -27,7 +27,7 @@ desc("Test everything");
 task("test", [], function() {
     var reporter = require("nodeunit").reporters.minimal;
     reporter.run(['src/server/_server_test.js'], null, function(failures) {
-        if (failures) fail(chalk.red("Tests Failed :("));
+        if (failures) fail(chalk.red("Tests Failed :'("));
         complete();
     });
 }, { async: true });
@@ -44,7 +44,7 @@ task("test", [], function() {
 //     console.log("  b. 'git pull'");
 //     console.log("  c. 'jake'");
 //     console.log("3. 'git checkout integration");
-//     console.log("4. 'git merge master ==no-ff --log");
+//     console.log("4. 'git merge master --no-ff --log");
 //     console.log("5. 'git checkout master'");
 
 
